@@ -1,0 +1,104 @@
+version: '3.8'
+services:
+
+  pg-pq:
+    image: postgres:9.6-alpine
+    ports:
+      - "5432"
+    environment:
+      POSTGRES_USER: test
+      POSTGRES_PASSWORD: test
+      POSTGRES_DB: test
+
+  pg-pgx4:
+    image: postgres:9.6-alpine
+    ports:
+      - "5432"
+    environment:
+      POSTGRES_USER: test
+      POSTGRES_PASSWORD: test
+      POSTGRES_DB: test
+    healthcheck:
+      test: [ "CMD", "pg_isready" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  rabbit:
+    image: rabbitmq:3.6-management-alpine
+    ports:
+      - "5672"
+      - "15672"
+    healthcheck:
+      test: [ "CMD", "rabbitmqctl", "status" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:3.2-alpine
+    ports:
+      - "6379"
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  mongo:
+    image: mongo
+    restart: always
+    ports:
+      - "27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: mestre1234
+    healthcheck:
+      test: "mongo localhost:27017/local --quiet --eval 'quit(db.runCommand({ ping: 1 }).ok ? 0 : 2)'"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  mysql:
+    image: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    ports:
+      - "3306"
+    volumes: 
+        - ./init:/docker-entrypoint-initdb.d
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: mydb
+      MYSQL_USER: user
+      MYSQL_PASSWORD: user
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  memcached:
+    image: memcached:1.6.9-alpine
+    ports:
+      - "11211"
+
+  http:
+    image: pierreprinetti/apimock:latest
+    ports:
+      - "8090"
+    environment:
+      HOST: ":8090"
+  adminer:
+    image: adminer
+    restart: always
+    ports: 
+        - 8080:8080
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+      - 8081:8081
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: admin
+      ME_CONFIG_MONGODB_ADMINPASSWORD: mestre1234
+      ME_CONFIG_MONGODB_URL: mongodb://admin:mestre1234@mongo:27017/
