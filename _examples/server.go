@@ -6,10 +6,12 @@ import (
 	"net/http"
 	"time"
 
+	health "github.com/vitorspk/sre-backend-go"
 	healthHttp "github.com/vitorspk/sre-backend-go/checks/http"
 	healthMongo "github.com/vitorspk/sre-backend-go/checks/mongo"
 	healthMySql "github.com/vitorspk/sre-backend-go/checks/mysql"
 	healthPg "github.com/vitorspk/sre-backend-go/checks/postgres"
+	healthRabbit "github.com/vitorspk/sre-backend-go/checks/rabbitmq"
 )
 
 func main() {
@@ -38,7 +40,7 @@ func main() {
 		}),
 	})
 
-	postgres health check example
+	// postgres health check example
 	h.Register(health.Config{
 		Name:      "postgres-check",
 		Timeout:   time.Second * 5,
@@ -66,8 +68,8 @@ func main() {
 		Name:      "rabbit-aliveness-check",
 		Timeout:   time.Second * 5,
 		SkipOnErr: true,
-		Check: healthHttp.New(healthHttp.Config{
-			URL: `http://guest:guest@0.0.0.0:32780/api/aliveness-test/%2f`,
+		Check: healthRabbit.New(healthRabbit.Config{
+			DSN: `http://guest:guest@0.0.0.0:32780/api/aliveness-test/%2f`,
 		}),
 	})
 
