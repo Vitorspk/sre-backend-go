@@ -46,7 +46,7 @@ func main() {
 		Timeout:   time.Second * 5,
 		SkipOnErr: true,
 		Check: healthPg.New(healthPg.Config{
-			DSN: `postgres://test:test@0.0.0.0:32783/test?sslmode=disable`,
+			DSN: `postgres://test:test@0.0.0.0:56186/test?sslmode=disable`,
 		}),
 	})
 
@@ -56,7 +56,7 @@ func main() {
 		Timeout:   time.Second * 5,
 		SkipOnErr: true,
 		Check: healthMySql.New(healthMySql.Config{
-			DSN: `user:user@tcp(0.0.0.0:60787)/mydb?charset=utf8`,
+			DSN: `user:user@tcp(0.0.0.0:56193)/mydb?charset=utf8`,
 		}),
 	})
 
@@ -78,7 +78,7 @@ func main() {
 		Timeout:   time.Second * 5,
 		SkipOnErr: true,
 		Check: healthMongo.New(healthMongo.Config{
-			DSN: `mongodb://admin:mestre1234@127.0.0.1:60781/`,
+			DSN: `mongodb://admin:mestre1234@127.0.0.1:56189/`,
 		}),
 	})
 
